@@ -1,0 +1,14 @@
+# Ignore build artifacts
+/output/
+*.exe
+*.o
+*.out
+
+# Ignore temporary or backup files
+*.log
+*.tmp
+*.bak
+
+# Ignore system files
+.DS_Store
+Thumbs.db
