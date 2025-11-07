@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <unistd.h>  // For sleep()
+#include <unistd.h>  
 
 #define MAX_DEVICES 50
 #define MAX_IP_LEN 20
-#define CONNECTION_THRESHOLD 4  // Flag devices with more than 4 connections
+#define CONNECTION_THRESHOLD 4  
 
-// Colors for display
+
 #define RESET "\033[0m"
 #define RED "\033[1;31m"
 #define GREEN "\033[1;32m"
@@ -16,25 +16,25 @@
 #define CYAN "\033[1;36m"
 #define MAGENTA "\033[1;35m"
 
-// Structure for adjacency list node
+
 struct Node {
     int deviceIndex;
     struct Node* next;
 };
 
-// Device representation
+
 struct Device {
     char ip[MAX_IP_LEN];
     struct Node* adjacencyList;
     int connectionCount;
-    int flagged;  // 1 if suspicious
+    int flagged;  
 };
 
-// Global network array
+
 struct Device network[MAX_DEVICES];
 int deviceCount = 0;
 
-// Function to find device index
+
 int findDeviceIndex(char* ip) {
     for (int i = 0; i < deviceCount; i++)
         if (strcmp(network[i].ip, ip) == 0)
@@ -42,7 +42,7 @@ int findDeviceIndex(char* ip) {
     return -1;
 }
 
-// Add device if not present
+
 int addDevice(char* ip) {
     int index = findDeviceIndex(ip);
     if (index != -1)
@@ -60,7 +60,7 @@ int addDevice(char* ip) {
     return deviceCount++;
 }
 
-// Append connection to CSV
+
 void appendConnectionToCSV(const char* filename, char* ip1, char* ip2) {
     FILE* file = fopen(filename, "a");
     if (!file) {
@@ -71,7 +71,7 @@ void appendConnectionToCSV(const char* filename, char* ip1, char* ip2) {
     fclose(file);
 }
 
-// Add connection (undirected)
+
 void addConnection(char* ip1, char* ip2) {
     if (strcmp(ip1, ip2) == 0) {
         printf(RED "Error: Cannot connect a device to itself.\n" RESET);
@@ -82,7 +82,7 @@ void addConnection(char* ip1, char* ip2) {
     int i2 = addDevice(ip2);
     if (i1 == -1 || i2 == -1) return;
 
-    // Check if connection already exists
+    
     struct Node* temp = network[i1].adjacencyList;
     while (temp) {
         if (temp->deviceIndex == i2) {
@@ -92,7 +92,7 @@ void addConnection(char* ip1, char* ip2) {
         temp = temp->next;
     }
 
-    // Create bidirectional connection
+    
     struct Node* newNode = malloc(sizeof(struct Node));
     newNode->deviceIndex = i2;
     newNode->next = network[i1].adjacencyList;
@@ -108,10 +108,10 @@ void addConnection(char* ip1, char* ip2) {
 
     printf(GREEN "Connection added successfully: %s <-> %s\n" RESET, ip1, ip2);
 
-    // Save to CSV file
+    
     appendConnectionToCSV("connections.csv", ip1, ip2);
 
-    // Check and flag suspicious IPs
+    
     if (network[i1].connectionCount > CONNECTION_THRESHOLD && !network[i1].flagged) {
         network[i1].flagged = 1;
         printf(RED "[!] WARNING: Device %s now has %d connections and has been FLAGGED as suspicious!\n" RESET,
@@ -125,7 +125,7 @@ void addConnection(char* ip1, char* ip2) {
     }
 }
 
-// Load connections from CSV
+
 void loadConnectionsFromCSV(const char* filename) {
     FILE* file = fopen(filename, "r");
     if (!file) {
@@ -148,7 +148,7 @@ void loadConnectionsFromCSV(const char* filename) {
     printf(GREEN "Loaded %d connections from %s\n" RESET, loaded, filename);
 }
 
-// Display the entire network
+
 void displayNetwork() {
     system("clear || cls");
     printf(CYAN "\n====== CYBERSECURITY THREAT MAP ======\n" RESET);
@@ -176,7 +176,7 @@ void displayNetwork() {
 
     printf("--------------------------------------\n");
 
-    // Show CSV file content
+    
     printf(MAGENTA "\n--- CSV File: connections.csv ---\n" RESET);
     FILE* file = fopen("connections.csv", "r");
     if (file) {
@@ -190,7 +190,7 @@ void displayNetwork() {
     printf("--------------------------------------\n");
 }
 
-// Detect anomalies
+
 void detectAnomalies() {
     printf(MAGENTA "\n--- Anomaly Detection Report ---\n" RESET);
     int found = 0;
@@ -207,7 +207,7 @@ void detectAnomalies() {
         printf(GREEN "No suspicious devices detected.\n" RESET);
 }
 
-// Simulate random connections
+
 void simulateRandomConnections(const char* filename, int iterations, int delaySeconds) {
     printf(CYAN "\n--- Starting Live Simulation ---\n" RESET);
     char ip1[MAX_IP_LEN], ip2[MAX_IP_LEN];
@@ -227,7 +227,7 @@ void simulateRandomConnections(const char* filename, int iterations, int delaySe
     printf(MAGENTA "\nSimulation complete! %d connections added.\n" RESET, iterations);
 }
 
-// Menu-driven interface
+
 void menu() {
     int choice;
     char ip1[MAX_IP_LEN], ip2[MAX_IP_LEN];
